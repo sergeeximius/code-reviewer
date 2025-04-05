@@ -8,8 +8,11 @@ class ChatGPTLLM(LLMInterface):
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable is required for ChatGPT")
-        self.client = openai.OpenAI(api_key=api_key)
-        self.model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+        base_url = os.getenv("OPENAI_BASE_URL")
+        if not base_url:
+            base_url = None
+        self.client = openai.OpenAI(api_key=api_key, base_url=base_url)
+        self.model = os.getenv("OPENAI_MODEL", "deepseek-r1:14b")
         self.debug = debug
 
     def _get_prompt(self, mode: str) -> str:
@@ -21,6 +24,7 @@ class ChatGPTLLM(LLMInterface):
 
     def generate_review(self, content: str, mode: str) -> str:
         prompt = self._get_prompt(mode)
+        # print(prompt)
 
         if self.debug:
             print(f"ChatGPT Request:\nModel: {self.model}\nPrompt: {prompt}\nContent: {content[:500]}... (truncated)")
@@ -35,4 +39,3 @@ class ChatGPTLLM(LLMInterface):
             # max_tokens omitted for unlimited output
         )
         return response.choices[0].message.content.strip()
-
