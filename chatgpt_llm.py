@@ -24,7 +24,6 @@ class ChatGPTLLM(LLMInterface):
 
     def generate_review(self, content: str, mode: str) -> str:
         prompt = self._get_prompt(mode)
-        # print(prompt)
 
         if self.debug:
             print(f"ChatGPT Request:\nModel: {self.model}\nPrompt: {prompt}\nContent: {content[:500]}... (truncated)")
